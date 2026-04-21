@@ -1,5 +1,5 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 import { GenerateDto } from './dto/generate.dto';
 
 const TONE_LABELS = {
@@ -10,10 +10,10 @@ const TONE_LABELS = {
 
 @Injectable()
 export class AiService {
-  private client: Anthropic;
+  private client: OpenAI;
 
   constructor() {
-    this.client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    this.client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   }
 
   async generate(dto: GenerateDto) {
@@ -38,18 +38,22 @@ Trả về JSON với cấu trúc:
 `;
 
     try {
-      const message = await this.client.messages.create({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1024,
-        system: `Bạn là copywriter chuyên viết nội dung thiệp cưới Việt Nam.
+      const response = await this.client.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'system',
+            content: `Bạn là copywriter chuyên viết nội dung thiệp cưới Việt Nam.
 Viết bằng tiếng Việt, cảm xúc, phù hợp tone được chỉ định.
 Chỉ trả về JSON object thuần túy. Không giải thích, không markdown, không code block.`,
-        messages: [{ role: 'user', content: userPrompt }],
+          },
+          { role: 'user', content: userPrompt },
+        ],
+        response_format: { type: 'json_object' },
       });
 
-      const text = message.content[0].type === 'text' ? message.content[0].text : '';
-      const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-      return JSON.parse(cleaned);
+      const text = response.choices[0].message.content ?? '{}';
+      return JSON.parse(text);
     } catch (err) {
       throw new BadRequestException('AI generation thất bại: ' + err.message);
     }
