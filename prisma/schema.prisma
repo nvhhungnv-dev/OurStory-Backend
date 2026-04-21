@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  email     String    @unique
+  password  String
+  isPremium Boolean   @default(false)
+  projects  Project[]
+  createdAt DateTime  @default(now())
+}
+
+model Project {
+  id         String         @id @default(uuid())
+  userId     String
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  templateId String
+  jsonData   Json
+  shareSlug  String?        @unique
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  rsvps      RSVPResponse[]
+}
+
+model RSVPResponse {
+  id        String   @id @default(uuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name      String
+  phone     String?
+  attending Boolean
+  message   String?
+  createdAt DateTime @default(now())
+}
+
+model Feedback {
+  id        String   @id @default(uuid())
+  message   String
+  email     String?
+  createdAt DateTime @default(now())
+}
