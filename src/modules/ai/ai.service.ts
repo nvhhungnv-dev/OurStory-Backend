@@ -28,8 +28,61 @@ export class AiService {
 - Câu chuyện tình yêu: ${dto.loveStory ?? 'không có thông tin'}
 - Tone: ${tone}
 
-Trả về JSON, KHÔNG có markdown:
-{"sections":{"hero":{"title":"${dto.bride} & ${dto.groom}","subtitle":"[tagline lãng mạn ngắn]"},"story":{"body":"[đoạn văn 3-4 câu về câu chuyện tình yêu]"},"details":{"date":"[ngày cưới]","venue":"[địa điểm đẹp Việt Nam]"}}}`;
+Trả về JSON object thuần túy, KHÔNG có markdown, KHÔNG có giải thích. Cấu trúc chính xác như sau:
+{
+  "sections": {
+    "hero": {
+      "title": "${dto.bride} & ${dto.groom}",
+      "subtitle": "[ngày cưới và địa điểm ngắn gọn]",
+      "caption": "[lời chào mời trân trọng 1 câu]"
+    },
+    "story": {
+      "title": "[tiêu đề lãng mạn về câu chuyện tình]",
+      "body": "[đoạn văn 3-4 câu về hành trình tình yêu, dựa vào loveStory nếu có]"
+    },
+    "quote": {
+      "body": "[trích dẫn thơ/lời yêu ý nghĩa, 1-2 câu, italic]"
+    },
+    "venue": {
+      "title": "[tên địa điểm tổ chức đám cưới đẹp tại Việt Nam]",
+      "body": "[thông tin đầy đủ: ngày giờ, địa chỉ, dress code — emoji]"
+    },
+    "details": {
+      "title": "Thông tin lễ cưới",
+      "body": "[ngày giờ, địa điểm, dress code đầy đủ]"
+    },
+    "countdown": {
+      "subtitle": "[câu đếm ngược lãng mạn ngắn]"
+    },
+    "parents": {
+      "caption": "[lời hai họ kính mời trân trọng]",
+      "title": "Nhà Gái",
+      "body": "[tên cha mẹ cô dâu placeholder]"
+    },
+    "dresscode": {
+      "title": "Trang phục dự tiệc",
+      "body": "[gợi ý trang phục và màu sắc phù hợp tone thiệp]"
+    },
+    "program": {
+      "title": "Chương trình lễ cưới"
+    },
+    "rsvp": {
+      "title": "Xác nhận tham dự",
+      "body": "[lời nhờ xác nhận trân trọng, deadline trước ngày cưới 2 tuần]"
+    },
+    "intro": {
+      "body": "[lời mở đầu cảm xúc, 2-3 câu trân trọng]"
+    },
+    "invitation": {
+      "title": "Thiệp Mời",
+      "body": "[lời mời trang trọng đầy đủ]"
+    },
+    "closing": {
+      "title": "[lời kết ngắn, ấm áp]",
+      "body": "[câu kết lãng mạn]"
+    }
+  }
+}`;
 
     try {
       const response = await this.client.chat.completions.create({
