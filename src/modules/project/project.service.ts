@@ -53,6 +53,10 @@ export class ProjectService {
   async findBySlug(slug: string) {
     const project = await this.prisma.project.findUnique({ where: { shareSlug: slug } });
     if (!project) throw new NotFoundException('Trang không tồn tại');
+    this.prisma.project.update({
+      where: { shareSlug: slug },
+      data: { viewCount: { increment: 1 } },
+    }).catch(() => {});
     return project;
   }
 }
