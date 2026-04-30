@@ -161,7 +161,7 @@ Trả về JSON THUẦN TÚY (không markdown, không giải thích):
 
     try {
       const response = await this.client.chat.completions.create({
-        model: 'llama-3.1-8b-instant',
+        model: 'llama-3.3-70b-versatile',
         messages: [
           {
             role: 'system',
@@ -170,8 +170,8 @@ Trả về JSON THUẦN TÚY (không markdown, không giải thích):
           { role: 'user', content: prompt },
         ],
         response_format: { type: 'json_object' },
-        temperature: 0.9,
-        max_tokens: 2000,
+        temperature: 0.92,
+        max_tokens: 2400,
       });
 
       const text = response.choices[0].message.content ?? '{}';
@@ -182,36 +182,40 @@ Trả về JSON THUẦN TÚY (không markdown, không giải thích):
   }
 
   private fallbackStory(name1: string, name2: string) {
-    const places = ['Hà Nội', 'Đà Lạt', 'Hội An', 'Sài Gòn', 'Nha Trang'];
-    const place = places[Math.floor(Math.random() * places.length)];
+    const scenarios = [
+      { place: 'Hà Nội', detail: 'một quán cà phê nhỏ trên phố Tây Sơn, hôm đó mưa tầm tã và cả hai đều chạy vào trú tạm', season: 'chiều thu' },
+      { place: 'Đà Lạt', detail: 'chuyến leo núi tập thể mà cả hai cùng lạc đường, phải hỏi đường nhau rồi quyết định đi cùng', season: 'sáng sương' },
+      { place: 'Sài Gòn', detail: 'góc văn phòng quen thuộc, cạnh nhau mỗi ngày mà mãi tới lần ${name2} mượn bút mới thực sự để ý', season: 'buổi chiều' },
+    ];
+    const s = scenarios[Math.floor(Math.random() * scenarios.length)];
     return {
-      title: `Chuyện Tình ${name1} & ${name2}`,
-      tagline: `Một tình yêu đẹp bắt đầu từ những điều bình thường nhất`,
+      title: `${name1} & ${name2}`,
+      tagline: `Gặp nhau đúng lúc, ở lại đúng người`,
       sections: [
         {
           id: 'first-meeting',
           title: 'Lần Đầu Gặp Gỡ',
-          content: `${name1} và ${name2} gặp nhau lần đầu tại ${place} vào một buổi chiều bình thường mà không ai ngờ sẽ thay đổi cuộc đời cả hai. Ánh mắt giao nhau lần đầu, tim cả hai đều đập nhanh hơn một chút. Họ nói chuyện mãi không biết chán, từ những điều nhỏ nhặt đến những ước mơ lớn lao. Đó là khởi đầu của một câu chuyện tình đẹp.`,
+          content: `${name1} và ${name2} gặp nhau tại ${s.detail}. ${s.place} ${s.season} hôm đó không có gì đặc biệt ngoài việc cả hai đều quên mất thời gian. Câu chuyện cứ nối tiếp nhau, từ chủ đề này sang chủ đề khác, cho đến khi trời tối hẳn mới nhận ra. Lúc chia tay, ${name1} đứng một lúc nhìn theo rồi tự hỏi không biết có dịp gặp lại không.`,
         },
         {
           id: 'falling-in-love',
           title: 'Yêu Từ Lúc Nào',
-          content: `Không ai biết chính xác khoảnh khắc nào tình yêu bắt đầu chớm nở trong lòng ${name1} và ${name2}. Có lẽ là lần ${name2} nhớ món ăn yêu thích của ${name1} mà không cần nhắc. Hay là lần ${name1} thức khuya lắng nghe ${name2} kể về những lo lắng nhỏ nhặt. Tình yêu đến nhẹ nhàng như thế, không ồn ào mà thật sâu.`,
+          content: `${name2} không nhớ chính xác khoảnh khắc nào mình bắt đầu để ý. Có lẽ là lần ${name1} nhắn tin lúc 11 giờ đêm hỏi "ăn chưa?" — đơn giản vậy thôi mà tim lại đập khác đi. Hoặc lần ${name1} nhớ chi tiết nhỏ ${name2} kể tuần trước mà bản thân còn quên. Tình yêu kiểu đó không đến ồn ào — nó ngấm dần như mưa phùn, đến lúc nhận ra thì đã ướt hết rồi.`,
         },
         {
           id: 'special-moments',
-          title: 'Những Khoảnh Khắc Đáng Nhớ',
-          content: `Hai người cùng nhau trải qua biết bao kỷ niệm khó quên. Những chuyến đi xa cùng nhau, những buổi chiều lang thang phố cũ, những bữa ăn khuya sau khi tăng ca mệt mỏi. ${name1} và ${name2} tìm thấy ở nhau một người bạn đồng hành thật sự, người không chỉ ở bên trong niềm vui mà còn vững chắc trong những lúc khó khăn.`,
+          title: 'Những Khoảnh Khắc',
+          content: `Chuyến đi ${s.place} năm đó hai người cùng lạc đường, bản đồ offline không có sóng, và cả hai phải hỏi đường người địa phương bằng thứ ${s.place === 'Đà Lạt' ? 'tiếng Kinh lơ lớ' : 'giọng miền nghe không quen'}. ${name1} cười sặc sụa còn ${name2} thì giả vờ nghiêm mặt. Về nhà ai cũng nói chuyến đó vui nhất năm — nhưng lý do thật sự không ai nói ra.`,
         },
         {
           id: 'proposal',
           title: 'Lời Cầu Hôn',
-          content: `Vào một buổi tối đặc biệt, ${name2} đã chuẩn bị tất cả mọi thứ thật chu đáo và đầy bất ngờ. Khi ${name1} nhìn thấy toàn bộ tâm ý đó, mắt đã đỏ hoe từ lúc nào. Câu hỏi được đặt ra trong tiếng tim đập rộn ràng và câu trả lời là một cái gật đầu đẫm nước mắt hạnh phúc. Đó là khoảnh khắc hai người biết rằng họ thuộc về nhau.`,
+          content: `Không có hoa, không có nhẫn kim cương, không có màn hình LED. ${name2} hỏi vào một buổi tối thường, khi cả hai đang ngồi ăn cơm nhà, đèn vàng chiếu xuống bàn. Chỉ một câu — và ${name1} im lặng đủ lâu để ${name2} bắt đầu lo. Rồi ${name1} gật đầu, mắt đỏ hoe, và bữa cơm tối hôm đó nguội hẳn vì không ai còn nhớ ăn nữa.`,
         },
         {
           id: 'future',
           title: 'Tương Lai Cùng Nhau',
-          content: `${name1} và ${name2} bước vào chặng đường mới với trái tim đầy yêu thương và hy vọng. Họ mơ về một ngôi nhà nhỏ ấm áp, những chuyến đi cùng nhau khắp thế giới, và những bữa sáng bình yên bên nhau mỗi ngày. Tình yêu của họ không chỉ là cảm xúc nhất thời mà là cam kết được xây dựng qua từng ngày sống chung. Câu chuyện tình đẹp nhất vẫn đang ở phía trước.`,
+          content: `${name1} và ${name2} không mơ điều gì to lớn — chỉ muốn thức dậy mỗi sáng bên cạnh người mình chọn. Một buổi sáng ${name2} nấu cháo bị hơi mặn, ${name1} vẫn ăn hết rồi khen ngon. Những điều nhỏ như vậy — chứ không phải những ngày trọng đại — mới là thứ giữ hai người lại với nhau qua mọi mùa.`,
         },
       ],
     };
